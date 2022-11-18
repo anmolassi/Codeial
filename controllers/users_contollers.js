@@ -22,18 +22,16 @@ module.exports.profile = function (req, res) {
 //   } else {
 //     return res.redirect("/users/sign-in");
 //   }
-
-
 return res.render('user_profile', {
     title: 'User Profile'
 })
 };
-module.exports.user_profile = function (req, res) {
-  console.log("sas");
-  return res.render("user_profile", {
-    title: "USER PROFILE",
-  });
-};
+// module.exports.user_profile = function (req, res) {
+//   console.log("sas");
+//   return res.render("user_profile", {
+//     title: "USER PROFILE",
+//   });
+// };
 //render the sign up page
 module.exports.signUp = function (req, res) {
     if(req.isAuthenticated()){
@@ -54,7 +52,7 @@ module.exports.signIn = function (req, res) {
 };
 //get the sign up data
 module.exports.create = function (req, res) {
-  console.log(req.body);
+  //console.log(req.body);
   if (req.body.password != req.body.confirm_password) {
     return res.redirect("back");
   }
@@ -111,9 +109,21 @@ module.exports.createSession=function(req,res){
 
 
 // sign out
-module.exports.signOut=function(req,res){
-    let id=req.cookies.user_id;
-    console.log(id);
-    res.cookie("user_id",""); 
-    return res.redirect("back");
-}
+// module.exports.signOut=function(req,res){
+//     let id=req.cookies.user_id;
+//     console.log(id);
+//     res.cookie("user_id",""); 
+//     return res.redirect("back");
+// }
+
+// module.exports.destorySession=function(req,res){
+//   req.logout();
+
+//   return res.redirect('/')
+// }
+module.exports.destorySession=function(req, res, next) {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
+};
