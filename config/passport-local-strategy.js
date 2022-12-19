@@ -41,7 +41,7 @@ passport.deserializeUser(function(id,done){
     });
 });
 
-//chech if the user is authenticated
+//check if the user is authenticated
 passport.checkAuthentication=function(req,res,next){
     if(req.isAuthenticated()){
         return next();

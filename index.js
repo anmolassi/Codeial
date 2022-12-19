@@ -14,9 +14,17 @@ const passport=require('passport');
 const passportLocal=require('./config/passport-local-strategy');
 const MongoStore=require('connect-mongo');
 const { Store } = require('express-session');
+const sassMiddleware= require('node-sass-middleware');
+
 //set up for static files 
 app.use(express.static('./assets'));//with respect to this we need to give the location of our static files
-
+app.use(sassMiddleware({
+    src :'./assets/scss',
+    dest:'./assets/css',
+    debug:true,
+    outputStyle:'extended',
+    prefix:'/css'
+}));
 
 //extract style and scripts from sub pages into teh layout
 app.set('layout extractStyles',true);
