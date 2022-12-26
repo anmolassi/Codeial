@@ -15,7 +15,8 @@ const passportLocal=require('./config/passport-local-strategy');
 const MongoStore=require('connect-mongo');
 const { Store } = require('express-session');
 const sassMiddleware= require('node-sass-middleware');
-
+const flash=require('connect-flash');
+const customMware=require('./config/middleware');
 //set up for static files 
 app.use(express.static('./assets'));//with respect to this we need to give the location of our static files
 app.use(sassMiddleware({
@@ -58,6 +59,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.setAuthenticatedUser);
+
+app.use(flash());
+app.use(customMware.setFlash);
 //use express server
 app.use('/',require('./routes'));//it will move to routes/index.js for furthur 
 

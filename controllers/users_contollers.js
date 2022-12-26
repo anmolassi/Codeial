@@ -94,6 +94,7 @@ module.exports.create = function (req, res) {
 };
 //sign in and create session for the user
 module.exports.createSession = function (req, res) {
+  req.flash('success','Logged in Successfully');
   return res.redirect("/");
 };
 
@@ -128,17 +129,18 @@ module.exports.createSession = function (req, res) {
 //     res.cookie("user_id","");
 //     return res.redirect("back");
 // }
-
-// module.exports.destorySession=function(req,res){
-//   req.logout();
-
-//   return res.redirect('/')
+// module.exports.destroySession = async function(req, res){
+//   await req.logout();
+//   await req.flash('success', 'You have logged out!');
+//   return res.redirect('/');
+//   // return res.redirect('/',{flash:{success,"MESSAGE"}})
 // }
 module.exports.destorySession = function (req, res, next) {
   req.logout(function (err) {
     if (err) {
       return next(err);
     }
+    req.flash('success', 'You have logged out!');
     res.redirect("/");
-  });
-};
+
+})};
