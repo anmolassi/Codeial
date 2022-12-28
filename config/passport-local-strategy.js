@@ -9,7 +9,7 @@ passport.use(new LocalStrategy({
     usernameField:'email',       //usernmaeField is a part pf the syntax
     passReqToCallback:true,
 },
-function(email,password,done){
+function(req,email,password,done){
     // email and password will be passed and done will also be passed into the function, done is callback function reporting back to PASSPORT
     //find a user and establish the identity
     User.findOne({email:email},function(err,user){
