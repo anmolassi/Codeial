@@ -2,6 +2,8 @@
 //     res.end('<h1>User Profile</h1>');
 // }
 const User = require("../models/user");
+const fs = require("fs");
+const path = require("path");
 module.exports.profile = function (req, res) {
   // console.log('SAS');
   // return res.render('user_profile', {
@@ -24,7 +26,7 @@ module.exports.profile = function (req, res) {
   User.findById(req.params.id, function (err, user) {
     return res.render("user_profile", {
       title: "User Profile",
-      profile_user:user
+      profile_user: user,
     });
   });
 };
@@ -35,18 +37,50 @@ module.exports.profile = function (req, res) {
 //   });
 // };
 
-module.exports.update= function(req,res){
-  if(req.user.id == req.params.id){
-    // User.findByIdAndUpdate(req.params.id,{name: req.body.name, email:req.body.email},function(err,user){
-    //   return res.redirect('back');
-    // });
-    User.findByIdAndUpdate(req.params.id,req.body,function(err,user){
-      return res.redirect('back');
-    });
-  }else{
-    return res.status(401).send('Unauthorized');
+module.exports.update = async function (req, res) {
+  // if(req.user.id == req.params.id){
+  //   // User.findByIdAndUpdate(req.params.id,{name: req.body.name, email:req.body.email},function(err,user){
+  //   //   return res.redirect('back');
+  //   // });
+  //   User.findByIdAndUpdate(req.params.id,req.body,function(err,user){
+  //     return res.redirect('back');
+  //   });
+  // }else{
+  //   return res.status(401).send('Unauthorized');
+  // }
+  if (req.user.id == req.params.id) {
+    try {
+      let user = await User.findById(req.params.id);
+      User.uploadedAvatar(req, res, function (err) {
+        if (err) {
+          console.log("****Multer Error: ", err);
+        }
+        user.name = req.body.name;
+        user.email = req.body.email;
+        if (req.file) {
+          //this is saving the path of the uploaded file into the avatar field in the user database
+          if (user.avatar) {
+            // to check whether file exsists or got deleted from the database by some unfair means.
+            if (fs.existsSync(user.avatar)) {
+              // to remove the file 
+              fs.unlinkSync(path.join(__dirname, "..", user.avatar));
+            }
+          }
+          user.avatar = User.avatarPath + "/" + req.file.filename;
+          console.log(req.file);
+        }
+        user.save();
+        return res.redirect("back");
+      });
+    } catch (err) {
+      req.flash("error", err);
+      return res.redirect("back");
+    }
+  } else {
+    req.flash("error", "Unauthorized!");
+    return res.status(401).send("Unauthorized");
   }
-}
+};
 //render the sign up page
 module.exports.signUp = function (req, res) {
   if (req.isAuthenticated()) {
@@ -94,7 +128,7 @@ module.exports.create = function (req, res) {
 };
 //sign in and create session for the user
 module.exports.createSession = function (req, res) {
-  req.flash('success','Logged in Successfully');
+  req.flash("success", "Logged in Successfully");
   return res.redirect("/");
 };
 
@@ -140,7 +174,7 @@ module.exports.destorySession = function (req, res, next) {
     if (err) {
       return next(err);
     }
-    req.flash('success', 'You have logged out!');
+    req.flash("success", "You have logged out!");
     res.redirect("/");
-
-})};
+  });
+};

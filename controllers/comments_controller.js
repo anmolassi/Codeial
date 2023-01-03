@@ -1,7 +1,6 @@
 const { redirect } = require("express/lib/response");
 const Comment = require("../models/comment");
 const Post = require("../models/post");
-console.log("googhy");
 module.exports.create = async function (req, res) {
   //first find the post then comment to prevent misuse by misusing the ID in inspect
   try {
@@ -12,7 +11,19 @@ module.exports.create = async function (req, res) {
         post: req.body.post,
         user: req.user._id,
       });
-      req.flash('success','Comment published!')
+
+      if (req.xhr) {
+        comment = await (
+          await comment.populate("user", "name")
+        ).populate("post");
+        return res.status(200).json({
+          data: {
+            comment: comment,
+          },
+          message: "Comment made!",
+        });
+      }
+      req.flash("success", "Comment published!");
       post.comments.push(comment);
       post.save();
       res.redirect("/");
@@ -30,7 +41,7 @@ module.exports.destroy = async function (req, res) {
       let postId = comment.post;
 
       await comment.remove();
-      await req.flash('error','Comment removed!');
+      await req.flash("error", "Comment removed!");
       await Post.findByIdAndUpdate(postId, {
         $pull: { comments: req.params.id },
       });
