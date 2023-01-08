@@ -12,8 +12,30 @@
     <input type="file" name="avatar" id="Profile Picture">
     <input type="submit" value="Update">
 </form>
+<h2>Preview</h2>
+<div id="hello"></div>
 <% } else {%>
     <!-- else show only the profile info -->
 <p><%= profile_user.name %></p>
 <p><%= profile_user.email %></p>
 <% } %>
+<script>
+    const chooseFile = document.getElementById("Profile Picture");
+    const imgPreview = document.getElementById("hello");
+    chooseFile.addEventListener("change", function () {
+      getImgData();
+    });
+    // The getImgSrc() function uses the FileReader API to insert the image into the page using it’s base64 encoded data:
+    function getImgData() {
+      const files = chooseFile.files[0];
+      if (files) {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(files);
+        fileReader.addEventListener("load", function () {
+          imgPreview.style.display = "block";
+          imgPreview.innerHTML = `<img src=" ${this.result} " />`;
+        });    
+      }
+    }
+    
+    </script>
