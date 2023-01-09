@@ -1,6 +1,7 @@
 const { redirect } = require("express/lib/response");
 const Comment = require("../models/comment");
 const Post = require("../models/post");
+const commentsMailer= require('../mailers/comments_mailer');
 module.exports.create = async function (req, res) {
   //first find the post then comment to prevent misuse by misusing the ID in inspect
   try {
@@ -12,10 +13,13 @@ module.exports.create = async function (req, res) {
         user: req.user._id,
       });
 
+      post.comments.push(comment);
+      post.save();
+
+      comment = await (await comment.populate("user", "name email")).populate("post");
+      commentsMailer.newComment(comment);
       if (req.xhr) {
-        comment = await (
-          await comment.populate("user", "name")
-        ).populate("post");
+
         return res.status(200).json({
           data: {
             comment: comment,
@@ -24,8 +28,7 @@ module.exports.create = async function (req, res) {
         });
       }
       req.flash("success", "Comment published!");
-      post.comments.push(comment);
-      post.save();
+
       res.redirect("/");
     }
   } catch (err) {
