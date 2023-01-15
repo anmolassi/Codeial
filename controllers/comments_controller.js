@@ -2,6 +2,8 @@ const { redirect } = require("express/lib/response");
 const Comment = require("../models/comment");
 const Post = require("../models/post");
 const commentsMailer= require('../mailers/comments_mailer');
+const queue=require('../config/kue')
+const commentEmailWorker=require('../workers/comment_email_worker');
 module.exports.create = async function (req, res) {
   //first find the post then comment to prevent misuse by misusing the ID in inspect
   try {
@@ -17,7 +19,15 @@ module.exports.create = async function (req, res) {
       post.save();
 
       comment = await (await comment.populate("user", "name email")).populate("post");
-      commentsMailer.newComment(comment);
+      // commentsMailer.newComment(comment);
+      
+
+      let job = queue.create('emails', comment).save(function(err){
+        if(err){
+          console.log('Error in sending to the queue',err);
+        }
+        console.log('job enqueued', job.id);
+      })
       if (req.xhr) {
 
         return res.status(200).json({

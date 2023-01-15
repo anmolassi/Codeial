@@ -1,12 +1,29 @@
 <h1>Sign In</h1>
 
 <form action="/users/create-session" method="POST">
-    <input type="email" name="email" placeholder="Email"  required>
-    <input type="password" name="password" placeholder="Password"  required>
-    <input type="submit" value="Sign In">
-
+  <input
+    type="email"
+    name="email"
+    placeholder="Email"
+    id="email"
+    value=""
+    required
+  />
+  <input type="password" name="password" placeholder="Password" required />
+  <input type="submit" value="Sign In" />
 </form>
 
 <p>
-    <a href="/users/auth/google">Google Sign In/ Sign Up</a>
+  <a href="/users/auth/google">Google Sign In/ Sign Up</a>
+  <br />
+  <br />
+  <a href="/forgot-password/" id="reset">Forgot Password</a>
 </p>
+<script>
+  var reset = document.getElementById("reset");
+  var email = document.getElementById("email");
+  reset.addEventListener("click", function () {
+    reset.href = `/forgot-password/${email.value}`;
+    console.log(reset.href);
+  });
+</script>

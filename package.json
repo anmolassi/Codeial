@@ -10,6 +10,7 @@
   "author": "anmolassi",
   "license": "ISC",
   "dependencies": {
+    "alert": "^5.1.4",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^4.6.0",
     "connect-mongodb-session": "^3.1.1",
@@ -19,13 +20,17 @@
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.0",
+    "kue": "http://github.com/Automattic/kue/tarball/master",
+    "kue-dashboard-express": "^1.5.2",
     "mongoose": "^6.7.1",
     "multer": "^1.4.5-lts.1",
+    "node-popup": "^0.1.14",
     "node-sass-middleware": "^1.0.1",
     "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "passport-google-oauth": "^2.0.0",
     "passport-jwt": "^4.0.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "popups": "^1.1.3"
   }
 }
